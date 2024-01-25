@@ -27,6 +27,11 @@ def check_brothers(p1,p2):
         return True
     else:
         return False
+def check_cousins(p1,p2):
+    if(check_brothers(p1,p2)==False and check_parents(p1,p2)==False and check_parents(p2,p1)==False):
+        return True
+    else:
+        return False
 sara=Person("Sara")
 mother=Person("Mother")
 grandmother=Person("GrandMather")
