@@ -14,7 +14,11 @@ class Person:
         # self.children = [LANMAN(i) for i in children]
 def set_parents(parent,child):
     child.parent=parent
-    child.num=parent.num+1
+    parent.num=child.num+1
+    T=parent
+    while T.parent!=None:
+        T=T.parent
+        T.parent.num+=1
 def check_parents(p1,p2):
     if p1.parent==None:
         return False
@@ -27,20 +31,21 @@ def check_brothers(p1,p2):
         return True
     else:
         return False
-def check_cousins(p1,p2):
-    if(check_brothers(p1,p2)==False and check_parents(p1,p2)==False and check_parents(p2,p1)==False):
-        return True
-    else:
-        return False
+def common_ancestor(p1,p2):
+    if p1.num>p2.num:
+        while p2.num!=p1.num:
+            p2=p2.parent
+    elif p2.num>p1.num:
+        while p2.num!=p1.num:
+            p1=p1.parent
+    while p1.name!=p2.name:
+        p1=p1.parent
+        p2=p2.parent
+    print(p1.realname)
+    return p1.name
 sara=Person("Sara")
 mother=Person("Mother")
 grandmother=Person("GrandMather")
 set_parents(mother,sara)
 set_parents(grandmother,mother)
-T=sara
-while(T.parent!=None):
-    print(T.parent.name)
-    T=T.parent
-print(check_parents(sara,grandmother))
-print(check_parents(grandmother,sara))
-
+common_ancestor(sara,mother)
