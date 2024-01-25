@@ -43,6 +43,11 @@ def common_ancestor(p1,p2):
         p2=p2.parent
     print(p1.realname)
     return p1.name
+def check_cousins(p1,p2):
+    if(check_brothers(p1,p2)==False and check_parents(p1,p2)==False and check_parents(p2,p1)==False):
+        return True
+    else:
+        return False
 def farthest_child(p):
     return p.num
 sara=Person("Sara")
