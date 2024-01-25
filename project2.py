@@ -10,15 +10,30 @@ class Person:
         self.name = LANMAN(name)
         self.realname = name
         self.parent = None
-        self.num=0
-        # self.children = [LANMAN(i) for i in children]
+        self.Height=0
+        #self.Depth=0
+        self.farthestchild=None
 def set_parents(parent,child):
     child.parent=parent
-    parent.num=max(child.num+1,parent.num)
-    T=parent
+    if child.Height+1>parent.Height:
+        parent.Height=child.Height+1
+        T=parent
+        while T.parent!=None:
+            pre_T=T
+            T=T.parent
+            T.parent.Height=pre_T+1
+        if child.farthestchild==None:
+            parent.farthestchild=child
+        else:
+            parent.farthestchild=child.farthestchild
+   # parent.num=max(child.num+1,parent.num)
+def Depth(p1):
+    T=p1
+    count=int(0)
     while T.parent!=None:
         T=T.parent
-        T.parent.num+=1
+        count+=1
+    return count
 def check_parents(p1,p2):
     if p1.parent==None:
         return False
@@ -32,12 +47,14 @@ def check_brothers(p1,p2):
     else:
         return False
 def common_ancestor(p1,p2):
-    if p1.num>p2.num:
-        while p2.num!=p1.num:
-            p2=p2.parent
-    elif p2.num>p1.num:
-        while p2.num!=p1.num:
+    D1=Depth(p1)
+    D2=Depth(p2)
+    if D1>D2:
+        while D2!=Depth(p1):
             p1=p1.parent
+    elif D2<D1:
+        while Depth(p2)!=D1:
+            p2=p2.parent
     while p1.name!=p2.name:
         p1=p1.parent
         p2=p2.parent
@@ -49,10 +66,20 @@ def check_cousins(p1,p2):
     else:
         return False
 def farthest_child(p):
-    return p.num
+    return p.Height
 sara=Person("Sara")
 mother=Person("Mother")
 grandmother=Person("GrandMather")
+aunt=Person("Aunt")
+jo=Person("Jo")
+lona=Person("Lona")
+baby=Person("Baby")
+set_parents(lona,baby)
 set_parents(mother,sara)
+set_parents(aunt,jo)
+set_parents(aunt,lona)
 set_parents(grandmother,mother)
-common_ancestor(sara,mother)
+set_parents(grandmother,aunt)
+print(sara.Height)
+common_ancestor(baby,jo)
+print(aunt.farthestchild.realname)
