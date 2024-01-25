@@ -14,7 +14,7 @@ class Person:
         # self.children = [LANMAN(i) for i in children]
 def set_parents(parent,child):
     child.parent=parent
-    parent.num=child.num+1
+    parent.num=max(child.num+1,parent.num)
     T=parent
     while T.parent!=None:
         T=T.parent
@@ -43,6 +43,8 @@ def common_ancestor(p1,p2):
         p2=p2.parent
     print(p1.realname)
     return p1.name
+def farthest_child(p):
+    return p.num
 sara=Person("Sara")
 mother=Person("Mother")
 grandmother=Person("GrandMather")
