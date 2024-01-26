@@ -79,23 +79,24 @@ class Family:
         self.family = {}
 
     def Add(self, person):
-        if person not in self.family.values():
+        if person not in self.family.keys():
             self.family[person] = Person(person)
 
     def Del(self, person):
-        if person in self.family:
+        if person in self.family.keys():
             self.family[person] = None
         else:
             print("This person is not in family.")
 
     def Find(self, person):
-        if person in self.family.values():
-            print(person.name)
-            return person.name
+        if person in self.family.keys():
+            print(self.family[person].name)
+            return self.family[person].name
         else:
             print("This person is not in family.")
 
     def Size(self):
+        print(len(self.family))
         return len(self.family)
     
     def set_parents(self, parent, child):
@@ -106,7 +107,7 @@ class Family:
             while T.parent != None:
                 pre_T = T
                 T = T.parent
-                T.parent.Height = pre_T+1
+                T.Height = pre_T.Height+1
             if self.family[child].farthestchild == None:
                 self.family[parent].farthestchild = self.family[child]
             else:
@@ -121,6 +122,12 @@ class Family:
         return count
 
     def check_parents(self, person1, person2):
+        if person1 not in self.family.keys():
+            print("The child is not in family.")
+            return False
+        if person2 not in self.family.keys():
+            print("The parent is not in family.")
+            return False
         if self.family[person1].parent == None:
             print(self.family[person1].name, "is not the parent of", self.family[person2].name)
             return False
@@ -132,6 +139,12 @@ class Family:
             return True
 
     def check_sibling(self, person1, person2):
+        if person1 not in self.family.keys():
+            print("The first person is not in family.")
+            return False
+        if person2 not in self.family.keys():
+            print("The second person is not in family.")
+            return False
         if self.family[person1].parent == self.family[person2].parent:
             print("They are siblings")
             return True
@@ -140,6 +153,12 @@ class Family:
             return False
 
     def check_distant_relationship(self, person1, person2):
+        if person1 not in self.family.keys():
+            print("The first person is not in family.")
+            return False
+        if person2 not in self.family.keys():
+            print("The second person is not in family.")
+            return False
         if (self.check_sibling(person1, person2) == False and self.check_parents(person1, person2) == False and self.check_parents(person2, person1) == False):
             print("They are distantly related")
             return True
@@ -148,6 +167,12 @@ class Family:
             return False
 
     def common_ancestor(self, person1, person2):
+        if person1 not in self.family.keys():
+            print("The first person is not in family.")
+            return 
+        if person2 not in self.family.keys():
+            print("The second person is not in family.")
+            return 
         D1 = self.Depth(person1)
         D2 = self.Depth(person2)
         if D1 > D2:
@@ -164,52 +189,45 @@ class Family:
         print(self.family[person1].name)
         return self.family[person1].name
 
-    def farthest_born(self, person):
-        print(self.family[person].Height)
-        return self.family[person].Height
-
     def find_farthest_relation(self):
-        farthest = None
-        max_distance = -1
-        for person in self.family.values():
-            for other in self.family.values():
-                if person != other:
-                    distance = self._find_distance(person, other)
-                    if distance > max_distance:
-                        max_distance = distance
-                        farthest = (person, other)
-        return farthest
+        distances = {} 
 
-    def _find_distance(self, person1, person2):
-        queue = [(person1, 0)]
-        visited = set()
-        while queue:
-            current, dist = queue.pop(0)
-            if current == person2:
-                return dist
-            visited.add(current)
-            for neighbor in current.parents + current.children:
-                if neighbor not in visited:
-                    queue.append((neighbor, dist + 1))
-        return -1
+        for member in self.family.values():
+            if member.parent is None:
+                distances[member.name] = 0
+            else:
+                distances[member.name] = distances[member.parent.name] + 1
+
+        farthest_members = max(distances, key=distances.get)
+        farthest_distance = distances[farthest_members]
+
+        second_farthest_members = []
+        second_farthest_distance = farthest_distance - 1
+        for member, distance in distances.items():
+            if distance == second_farthest_distance:
+                second_farthest_members.append(member)
+
+        return farthest_members, second_farthest_members
+
 
 Chelchele = Family()
 
+
+print("Enter")
+print('1 to make a new family')
+print("2 to add member to current family")
+print("3 to delete member from current family")
+print("4 to find a member of current family")
+print("5 to get the size of current family")
+print("6 to check parent-child relationship")
+print("7 to check sibling relationship")
+print("8 to check distant relationship")
+print("9 to find common ancestor")
+print("10 to find the farthest born")
+print("11 to find the most distant relationship")
+print("0 to exit")
 while True:
-    print("Enter")
-    print('1 to make a new family')
-    print("2 to add member to current family")
-    print("3 to delete member from current family")
-    print("4 to find a member of current family")
-    print("5 to get the size of current family")
-    print("6 to check parent-child relationship")
-    print("7 to check sibling relationship")
-    print("8 to check distant relationship")
-    print("9 to find common ancestor")
-    print("10 to find the farthest born")
-    print("11 to find the most distant relationship")
-    print("0 to exit")
-    n = input()
+    n = input("Please enter your choice: ")
     if n == "1":
         Chelchele.Add((input("Enter the name of ancestor: ")))
     elif n == "2":
@@ -217,9 +235,11 @@ while True:
             print("Please make a family first!")
             break
         else:
-            p = input("Enter the name of new member: ")
-            Chelchele.Add(input("Enter the name of new member: "))
-            Chelchele.set_parents(Person(input("Enter parent name: ")), Person(p))
+            person1 = input("Enter the name of child: ")
+            Chelchele.Add(person1)
+            parent=input("Enter the name of parent: ")
+            Chelchele.Add(parent)
+            Chelchele.set_parents(parent, person1)
     elif n == "3":
         Chelchele.Del(input("Enter the name: "))
     elif n == "4":
@@ -227,8 +247,7 @@ while True:
     elif n == "5":
         Chelchele.Size()
     elif n == "6":
-        Chelchele.check_parents(
-            input("Enter the child name: "), input("Enter the parent name: "))
+        Chelchele.check_parents(input("Enter the child name: "),input("Enter the parent name: "))
     elif n == "7":
         Chelchele.check_sibling(
             input("Enter the first name: "), input("Enter the second name: "))
@@ -240,8 +259,10 @@ while True:
             input("Enter the first name: "), input("Enter the second name: "))
     elif n == "10":
         Chelchele.farthest_born(
-            input("Enter the first name: "), input("Enter the second name: "))
+            input("Enter the name: "))
     elif n == "11":
-        Chelchele.find_farthest_relation()
+        print(Chelchele.find_farthest_relation())
     elif n == "0":
+        print("Thank you")
+        print("We hope you enjoyed meeting the mysterious Chelchele family [^-^]")
         break
