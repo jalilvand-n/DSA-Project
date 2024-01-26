@@ -189,6 +189,13 @@ class Family:
         print(self.family[person1].name)
         return self.family[person1].name
 
+    def farthest_born(self, person):
+        if person1 not in self.family.keys():
+            print("This person is not in family.")
+            return 
+        print(self.family[person].Height)
+        return self.family[person].Height
+    
     def find_farthest_relation(self):
         distances = {} 
 
